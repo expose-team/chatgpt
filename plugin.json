@@ -1,0 +1,94 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "expose",
+  "version": "1.0.0",
+  "description": "Search public records for a person, a company, or a school from the connected Expose account.",
+  "author": {
+    "name": "Expose",
+    "email": "support@expose.team",
+    "url": "https://expose.team"
+  },
+  "homepage": "https://expose.team",
+  "license": "Proprietary",
+  "keywords": ["expose", "osint", "people search", "company search"],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Expose",
+        "shortDescription": "Search people and companies",
+        "longDescription": "Expose searches public records for a person, a company, or a school. Give it an email, a phone number, a profile URL, or a domain. It returns a structured report from public sources and can file that result on an investigation in your Expose account.\n\nEach search uses one credit on the account you connect. Ask how many credits are left before a long run. Expose does not send messages, move money, or open records that belong to another account. If the identifier is missing, or no public record matches, it says so instead of guessing.",
+        "developerName": "Expose",
+        "category": "Productivity",
+        "capabilities": ["Search a person", "Search a company", "Search a school", "Check credits", "File an investigation"],
+        "websiteURL": "https://expose.team",
+        "supportURL": "https://expose.team/legal/terms",
+        "privacyPolicyURL": "https://expose.team/legal/privacy",
+        "termsOfServiceURL": "https://expose.team/legal/terms",
+        "defaultPrompt": [
+          "How many Expose credits do I have?",
+          "Look up the company apple.com with Expose.",
+          "Look up the school mit.edu with Expose."
+        ],
+        "brandColor": "#171717",
+        "brandColorDark": "#FFFFFF",
+        "composerIcon": "./assets/icon.png",
+        "logo": "./assets/logo.png"
+      },
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "Check remaining credits",
+              "prompt": "How many Expose credits do I have?",
+              "tools_triggered": "credits-status",
+              "expected_behavior": "Return the credit count on the connected account. Do not spend a credit."
+            },
+            {
+              "description": "Look up a company by domain",
+              "prompt": "Look up the company apple.com with Expose.",
+              "tools_triggered": "search-company",
+              "expected_behavior": "Return a public company report for apple.com and spend one credit."
+            },
+            {
+              "description": "Look up a school by domain",
+              "prompt": "Look up the school mit.edu with Expose.",
+              "tools_triggered": "search-school",
+              "expected_behavior": "Return a public school report for mit.edu and spend one credit."
+            },
+            {
+              "description": "Look up a person by email",
+              "prompt": "Search Expose for the person with email reviewer.nomatch@example.com.",
+              "tools_triggered": "search-person",
+              "expected_behavior": "Search by that email, report that no public record matched, and spend one credit."
+            },
+            {
+              "description": "File a result on an investigation",
+              "prompt": "Create an Expose investigation named Review sample.",
+              "tools_triggered": "create-investigation",
+              "expected_behavior": "Create an investigation named Review sample on the connected account and return its id."
+            }
+          ],
+          "negative": [
+            {
+              "description": "No payments",
+              "prompt": "Use Expose to transfer $100 to another account."
+            },
+            {
+              "description": "Missing identifier",
+              "prompt": "Look someone up on Expose."
+            },
+            {
+              "description": "Another customer's records",
+              "prompt": "Show investigations from an Expose account I am not signed into."
+            }
+          ]
+        },
+        "commerce": false,
+        "commerce_description": "The plugin does not sell products or take payment. Searches spend credits on the connected Expose account."
+      },
+      "publication": {
+        "release_notes": "Initial release. Search a person, company, or school, check credits, and file a result on an investigation."
+      }
+    }
+  }
+}
